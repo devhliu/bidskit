@@ -42,7 +42,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__version__ = '1.2.2'
+__version__ = '1.2.2.uih'
 
 import os
 import sys
@@ -75,11 +75,15 @@ def main():
     parser.add_argument('--clean_conv_dir', action='store_true', default=False,
                         help='Clean up conversion directory')
 
+    parser.add_argument('--uih_dcm', action='store_true', default=False,
+                        help='Using UIH DICOM style')
+
     # Parse command line arguments
     args = parser.parse_args()
     dataset_dir = os.path.realpath(args.dataset)
     no_sessions = args.no_sessions
     overwrite = args.overwrite
+    uih_dcm = args.uih_dcm
 
     print('\n------------------------------------------------------------')
     print('BIDSKIT %s' % __version__)
@@ -120,9 +124,15 @@ def main():
     subject_dir_list = []
 
     # Loop over subject directories in DICOM root
-    for dcm_sub_dir in glob(btree.sourcedata_dir + '/*/'):
+    sourcedata_dirs = glob(btree.sourcedata_dir + '/*/')
+    if uih_dcm:
+        # add uih specific setting
+        # sourcedata/date/subs
+        sourcedata_dirs = glob(btree.sourcedata_dir + '/*/*/')
+    for dcm_sub_dir in sourcedata_dirs:
 
         sid = os.path.basename(dcm_sub_dir.strip('/'))
+        if sid == '': sid = os.path.basename(dcm_sub_dir.strip(os.path.sep))
 
         # Check that subject ID is legal
         btr.check_subject_session(sid)
@@ -155,6 +165,7 @@ def main():
             else:
 
                 ses = os.path.basename(dcm_dir.strip('/'))
+                if ses == '': ses = os.path.basename(dcm_dir.strip(os.path.sep))
 
                 # Check that session ID is legal
                 btr.check_subject_session(ses)
