@@ -1,4 +1,4 @@
-# BIDSKIT v1.2.0
+# BIDSKIT v1.2.0.uih
 # MAINTAINER: jmt@caltech.edu
 
 # Install Ubuntu 18.04 LTS Bionic Beaver

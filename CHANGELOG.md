@@ -1,6 +1,10 @@
 # BIDSKIT Changelog
 
-## Version 1.2
+## Version 1.2.0.uih
+
+- Support of UIH DICOM
+
+## Version 1.2.0
 
 - Bring output directory structure into compliance with BIDS v1.2
 - Old source/ directory contents raised to top level of BIDS dataset directory
