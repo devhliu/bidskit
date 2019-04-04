@@ -45,6 +45,7 @@ SOFTWARE.
 __version__ = '1.2.2.uih'
 
 import os
+import re
 import sys
 import argparse
 import subprocess
@@ -133,7 +134,7 @@ def main():
 
         sid = os.path.basename(dcm_sub_dir.strip('/'))
         if sid == '': sid = os.path.basename(dcm_sub_dir.strip(os.path.sep))
-
+        sid = re.sub('[^\da-zA-Z]', '', sid)
         # Check that subject ID is legal
         btr.check_subject_session(sid)
 
