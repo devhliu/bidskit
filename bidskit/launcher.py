@@ -64,7 +64,7 @@ def main():
 
     parser.add_argument('-d', '--dataset', default='.', help='BIDS dataset directory containing sourcedata subdirectory')
 
-    parser.add_argument('--no-sessions', action='store_true', default=False,
+    parser.add_argument('--no_sessions', action='store_true', default=False,
                         help='Do not use session sub-directories')
 
     parser.add_argument('--overwrite', action='store_true', default=False,
@@ -91,6 +91,7 @@ def main():
     print('------------------------------------------------------------')
 
     # Check for minimum dcm2niix version (mostly for multirecon suffix handling)
+    # supporting of UIH dcm headers
     btr.check_dcm2niix_version('v1.0.20181125')
 
     # Create a BIDS directory tree object to handle file locations
@@ -157,20 +158,15 @@ def main():
             sub_prefix = 'sub-' + sid
 
             if no_sessions:
-
                 # If session subdirs aren't being used, *_ses_dir = *sub_dir
                 # Use an empty ses_prefix with os.path.join to achieve this
                 ses = ''
                 ses_prefix = ''
-
             else:
-
                 ses = os.path.basename(dcm_dir.strip('/'))
                 if ses == '': ses = os.path.basename(dcm_dir.strip(os.path.sep))
-
                 # Check that session ID is legal
                 btr.check_subject_session(ses)
-
                 ses_prefix = 'ses-' + ses
                 print('  Processing session ' + ses)
 
@@ -198,7 +194,6 @@ def main():
                 needs_converting = False
 
             if first_pass or needs_converting:
-
                 # Run dcm2niix conversion into working conversion directory
                 print('  Converting all DICOM images in %s' % dcm_dir)
                 devnull = open(os.devnull, 'w')
@@ -207,10 +202,8 @@ def main():
                                 stdout=devnull, stderr=subprocess.STDOUT)
 
             if not first_pass:
-
                 # Get subject age and sex from representative DICOM header
                 dcm_info = bio.dcm_info(dcm_dir)
-
                 # Add line to participants TSV file
                 btr.add_participant_record(dataset_dir, sid, dcm_info['Age'], dcm_info['Sex'])
 
@@ -219,12 +212,10 @@ def main():
                            args.clean_conv_dir, overwrite)
 
     if first_pass:
-
         # Create a template protocol dictionary
         btree.write_translator(translator)
 
     if not args.skip_if_pruning:
-
         print("\nSubject directories to prune:  " + ", ".join(subject_dir_list))
 
         for bids_subj_dir in subject_dir_list:
